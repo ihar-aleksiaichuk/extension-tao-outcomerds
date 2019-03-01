@@ -23,12 +23,13 @@ namespace oat\taoOutcomeRds\model;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoOutcomeUi\model\ResultsService;
 use oat\taoProctoring\model\monitorCache\DeliveryMonitoringService;
-use oat\taoQtiItem\model\qti\Resource;
 use oat\taoResultServer\models\classes\ResultDeliveryExecutionDelete;
 use oat\taoResultServer\models\classes\ResultManagement;
 use \core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
+
 
 /**
  * Implements tao results storage using the configured persistency "taoOutcomeRds"
@@ -81,13 +82,7 @@ class RdsResultStorage extends ConfigurableService
     /** result storage persistence identifier */
     const OPTION_PERSISTENCE = 'persistence';
 
-    /**
-     *  period FILTER variables
-     */
-    const PARAM_START_FROM = 'startfrom';
-    const PARAM_START_TO = 'startto';
-    const PARAM_END_FROM = 'endfrom';
-    const PARAM_END_TO = 'endto';
+   
 
 
     /**
@@ -493,31 +488,31 @@ class RdsResultStorage extends ConfigurableService
         $params = array();
         $ids = [];
 
-        if (array_key_exists(self::PARAM_START_FROM, $options) || array_key_exists(self::PARAM_END_FROM, $options)
-            || array_key_exists(self::PARAM_START_TO, $options) || array_key_exists(self::PARAM_END_TO, $options)) {
+        if (array_key_exists(ResultsService::PARAM_START_FROM, $options) || array_key_exists(ResultsService::PARAM_END_FROM, $options)
+            || array_key_exists(ResultsService::PARAM_START_TO, $options) || array_key_exists(ResultsService::PARAM_END_TO, $options)) {
 
             $ex_ids = ServiceProxy::singleton()->getExecutionsByDelivery(new core_kernel_classes_Resource($delivery[0]));
             foreach ($ex_ids as $execution) {
-                if (array_key_exists(self::PARAM_START_FROM, $options) && $options[self::PARAM_START_FROM] !== false) {
-                        if (\tao_helpers_Date::getTimeStamp($execution->getStartTime(), false) <= $options[self::PARAM_START_FROM]) {
+                if (array_key_exists(ResultsService::PARAM_START_FROM, $options) && $options[ResultsService::PARAM_START_FROM] !== false) {
+                        if (\tao_helpers_Date::getTimeStamp($execution->getStartTime(), false) <= $options[ResultsService::PARAM_START_FROM]) {
                             continue;
                         }
 
                 }
-                if (array_key_exists(self::PARAM_START_TO, $options) && $options[self::PARAM_START_TO] !== false) {
-                    if (\tao_helpers_Date::getTimeStamp($execution->getStartTime(), false) >= $options[self::PARAM_START_TO]) {
+                if (array_key_exists(ResultsService::PARAM_START_TO, $options) && $options[ResultsService::PARAM_START_TO] !== false) {
+                    if (\tao_helpers_Date::getTimeStamp($execution->getStartTime(), false) >= $options[ResultsService::PARAM_START_TO]) {
                         continue;
                     }
 
                 }
-                if (array_key_exists(self::PARAM_END_FROM, $options) && $options[self::PARAM_END_FROM] !== false) {
-                    if (\tao_helpers_Date::getTimeStamp($execution->getFinishTime(), false) <= $options[self::PARAM_END_FROM]) {
+                if (array_key_exists(ResultsService::PARAM_END_FROM, $options) && $options[ResultsService::PARAM_END_FROM] !== false) {
+                    if (\tao_helpers_Date::getTimeStamp($execution->getFinishTime(), false) <= $options[ResultsService::PARAM_END_FROM]) {
                         continue;
                     }
 
                 }
-                if (array_key_exists(self::PARAM_END_TO, $options) && $options[self::PARAM_END_TO] !== false) {
-                    if (\tao_helpers_Date::getTimeStamp($execution->getFinishTime(), false) >= $options[self::PARAM_END_TO]) {
+                if (array_key_exists(ResultsService::PARAM_END_TO, $options) && $options[ResultsService::PARAM_END_TO] !== false) {
+                    if (\tao_helpers_Date::getTimeStamp($execution->getFinishTime(), false) >= $options[ResultsService::PARAM_END_TO]) {
                         continue;
                     }
 
